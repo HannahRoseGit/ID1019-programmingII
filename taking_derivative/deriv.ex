@@ -42,10 +42,6 @@ defmodule Derivative do
     # 10. derivation of fraction 
     def deriv({:frac, e1, e2}, x) do {:frac, {:sub, {:mul, deriv(e1,x), e2}, {:mul, deriv(e2, x), e1}}, {:pow, e2, 2}} end
 
-    # print functions 
-#test = {:num, 1}
-#IO.write("expression: #{str_mkr(test)}\n")
-#def str_mkr({:num, n}) do "#{n}" end
     def test() do
         test = {:sin, {:mul, {:num, 2}, {:var, :x}}}
         IO.puts(str_mkr(test))
@@ -55,27 +51,55 @@ defmodule Derivative do
     
 
     # functions to make a string out of our expressions 
-    def str_mkr({:num, n}) do "#{n}" end
-    def str_mkr({:var, v}) do "#{v}" end
+    def str_mkr({:num, n}) do 
+        "#{n}" 
+    end
+
+    def str_mkr({:var, v}) do 
+        "#{v}" 
+    end
+
     def str_mkr({:add, e1, e2}) do
         "#{str_mkr(e1)} + #{str_mkr(e2)}"
     end
+
     def str_mkr({:mul, e1, e2}) do
        "( #{str_mkr(e1)} * #{str_mkr(e2)} )"
     end  
+
     def str_mkr({:pow, e1, e2}) do
        "#{str_mkr(e1)}^#{str_mkr(e2)}"
     end
+
     def str_mkr({:sin, e1}) do
         "sin( #{str_mkr(e1)} )"
     end
+
     def str_mkr({:cos, e1}) do
         "cos( #{str_mkr(e1)} )"
     end
     
+    #simplification 
+    def simp({:num, n}) do {:num, n} end 
+    def simp({:var, :x}) do {:var, :x} end 
+
+    #addition
+    def simp({:add, e1, e2}) do simp_add(simp(e1), simp(e2)) end
+    def simp_add(e1, {:num, 0}) do e1 end
+    def simp_add({:num, 0}, e1) do e1 end  
+    def simp_add({:num, n1}, {:num, n2}) do {:num, n1+n2} end
+    def simp_add({:var, v}, {:var, v}) do {:mul, {:num, 2}, {:var, v}} end
+
+    #multiplication
+    def simp({:mul, e1, e2})  do simp_mul(simp(e1), simp(e2)) end
+    def simp_mul(_, {:num,0}) do {:num, 0} end
+    def simp_mul({:num, 0}, _) do {:num, 0} end
+    def simp_mul(e1, {:num,1}) do e1 end
+    def simp_mul({:num, 1}, e1) do e1 end
+    #def simp_mul(simp(e1), simp(e2)) do {:mul, e1*e2} end
 
 end
 
 Derivative.test()
-IO.puts("hi")
+IO.puts("Please be proud of yourself")
 
